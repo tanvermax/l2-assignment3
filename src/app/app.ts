@@ -105,7 +105,7 @@ app.post('/api/borrow', async (req: Request, res: Response) => {
 
         const data = await Borrow.create(req.body);
 
-        return res.status(201).json({
+        res.status(201).json({
             success: true,
             message: "Book borrowed successfully",
             // book: finalBook,
@@ -114,7 +114,7 @@ app.post('/api/borrow', async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+         res.status(500).json({
             success: false,
             message: "Internal server error",
         });
@@ -131,22 +131,19 @@ app.get('/api/borrow', async (req: Request, res: Response) => {
 
             {
                 $group: {
-                  _id: "$book", // book is a string
+                  _id: "$book", 
                   totalQuantity: { $sum: "$quantity" }
                 }
               },
-              // Join with books collection to get title and isbn
               {
                 $lookup: {
                   from: "books",
-                  localField: "_id",      // _id here is book (string)
-                  foreignField: "_id",    // book._id (must also be string!)
+                  localField: "_id",      
+                  foreignField: "_id",    
                   as: "bookInfo"
                 }
               },
-              // Flatten bookInfo array
               { $unwind: "$bookInfo" },
-              // Final shape
               {
                 $project: {
                   _id: 0,
@@ -158,12 +155,7 @@ app.get('/api/borrow', async (req: Request, res: Response) => {
                 }
             }
         ]);
-        // {
-        //     $group: {
-        //         _id: "$book",
-        //         totalQuantity: { $sum: "$quantity" }
-        //     }
-        // },
+      
 
         res.status(201).json({
             success: true,

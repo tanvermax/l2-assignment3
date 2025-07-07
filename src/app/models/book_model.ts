@@ -4,11 +4,15 @@ import { model, Schema } from "mongoose";
 
 const bookSchema = new Schema<IBooks, bookStaticMethod>(
     {
-        title: { type: String, required: true },
+        title: { type: String, required: [true,"please porive name"] },
         author: { type: String, required: true },
         gener: {
             type: String, required: true,
-            enum: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY",]
+            enum: { values:["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY",]
+                ,
+                message: ""
+            }
+
 
         },
         isbn: {
@@ -17,7 +21,7 @@ const bookSchema = new Schema<IBooks, bookStaticMethod>(
             unique: true
         },
         description: { type: String, required: false },
-        copies: { type: Number, required: true },
+        copies: { type: Number, required: true, min: [0, 'Copies must be a positive number'] },
         available: { type: Boolean, required: true, default: true },
 
     }, {
