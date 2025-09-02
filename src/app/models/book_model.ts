@@ -4,17 +4,17 @@ import { model, Schema } from "mongoose";
 
 const bookSchema = new Schema<IBooks, bookStaticMethod>(
     {
-        title: { type: String, required: [true,"please porive name"] },
+        title: { type: String, required: [true, "please porivde name"] },
         author: { type: String, required: true },
         gener: {
-            type: String, required: true,
-            enum: { values:["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY",]
-                ,
-                message: ""
+            type: String,
+            required: true,
+            enum: {
+                values: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],
+                message: "gener is required or upper case"
             }
-
-
-        },
+        }
+        ,
         isbn: {
             type: String,
             required: true,
@@ -36,7 +36,7 @@ const bookSchema = new Schema<IBooks, bookStaticMethod>(
 bookSchema.static("hashQuyantity", async function (bookId: string, quantity: number) {
 
 
-    console.log(bookId,quantity);
+    console.log(bookId, quantity);
     if (!bookId || isNaN(quantity) || quantity <= 0) {
         throw new Error("Invalid book ID or quantity");
     }

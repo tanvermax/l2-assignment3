@@ -11,15 +11,7 @@ app.use(express.json());
 
 // 1 no  Create Book
 app.post("/api/books", async (req: Request, res: Response) => {
-    const data = new Book({
-        title: "The Theory of dark knight",
-        author: "Stephen house of  dark knight",
-        gener: "HISTORY",
-        isbn: "805512431230163",
-        description: "An overview of cosmology and black house of  dark knight.",
-        copies: 80,
-        available: true,
-    })
+    const data = new Book(req.body)
     await data.save();
     res.status(201).json({
         success: true,
@@ -117,6 +109,7 @@ app.post('/api/borrow', async (req: Request, res: Response) => {
          res.status(500).json({
             success: false,
             message: "Internal server error",
+            data:error
         });
     }
 });
