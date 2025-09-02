@@ -1,66 +1,74 @@
-# 📚 Library Management API
+# 📖 Library Management API
 
-A RESTful API built with **Express**, **TypeScript**, and **MongoDB (Mongoose)** for managing a library system. It supports CRUD operations on books, borrowing logic with availability tracking, and an aggregation summary of borrowed books.
-
----
-
-## 📖 Table of Contents
-
-- [🎯 Objective](#-objective)
-- [🚀 Features](#-features)
-- [🛠️ Installation](#️-installation)
-- [⚙️ Configuration](#️-configuration)
-- [📦 API Endpoints](#-api-endpoints)
-  - [1. Create Book](#1-create-book)
-  - [2. Get All Books](#2-get-all-books)
-  - [3. Get Book by ID](#3-get-book-by-id)
-  - [4. Update Book](#4-update-book)
-  - [5. Delete Book](#5-delete-book)
-  - [6. Borrow a Book](#6-borrow-a-book)
-  - [7. Borrowed Books Summary](#7-borrowed-books-summary)
-- [🧪 Examples](#-examples)
-- [🚨 Error Handling](#-error-handling)
-- [🧰 Technologies Used](#-technologies-used)
-- [👨‍💻 Contributors](#-contributors)
-- [📄 License](#-license)
+A Library Management System built with **Express**, **TypeScript**, and **MongoDB (Mongoose)**.  
+This API allows managing books and borrow records with validation, business logic enforcement, aggregation, and filtering features.
 
 ---
 
 ## 🎯 Objective
+Develop a full-featured backend system to manage books and borrowing in a library.  
 
-To create a robust Library Management API that:
-
-- Validates and manages book records.
-- Tracks book borrowing with business logic enforcement.
-- Supports advanced queries and filtering.
-- Uses Mongoose middleware, static/instance methods, and aggregation pipelines.
-
----
-
-## 🚀 Features
-
-- 📚 Create, read, update, and delete books.
-- ✅ Schema validation using Mongoose.
-- 📉 Borrowing logic reduces available book copies.
-- 🧠 Auto-updates availability based on stock.
-- 🔍 Filtering, sorting, and pagination support.
-- 🔧 Uses Mongoose middleware, statics, and instance methods.
-- 📊 Aggregated borrow summaries using MongoDB pipeline.
+Key features:
+- Proper schema validation
+- Business logic enforcement (e.g., book availability control on borrow)
+- Aggregation pipeline for borrowed book summaries
+- Mongoose static/instance methods
+- Mongoose middleware (pre, post)
+- Filtering, sorting, and pagination
 
 ---
 
-## 🛠️ Installation
+## 🛠️ Tech Stack
+- **Express.js** – REST API framework  
+- **TypeScript** – Type safety  
+- **MongoDB + Mongoose** – Database and ODM  
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/library-management-api.git
-cd library-management-api
+---
 
-# Install dependencies
-npm install
+## 📂 Models & Validation
 
-# Copy environment file
-cp .env.example .env
+### **Book Model**
+| Field        | Type     | Validation / Notes                                                                 |
+|--------------|----------|------------------------------------------------------------------------------------|
+| `title`      | String   | Required                                                                           |
+| `author`     | String   | Required                                                                           |
+| `genre`      | String   | Required, must be one of: `FICTION`, `NON_FICTION`, `SCIENCE`, `HISTORY`, `BIOGRAPHY`, `FANTASY` |
+| `isbn`       | String   | Required, unique (International Standard Book Number)                              |
+| `description`| String   | Optional                                                                           |
+| `copies`     | Number   | Required, non-negative integer                                                     |
+| `available`  | Boolean  | Defaults to `true`, auto-updated if copies run out                                 |
 
-# Start the development server
-npm run dev
+---
+
+### **Borrow Model**
+| Field       | Type     | Validation / Notes                                   |
+|-------------|----------|------------------------------------------------------|
+| `book`      | ObjectId | Required, references a Book                          |
+| `quantity`  | Number   | Required, positive integer                           |
+| `dueDate`   | Date     | Required, due date for return                        |
+
+---
+
+## ❌ Generic Error Response
+```json
+{
+  "message": "Validation failed",
+  "success": false,
+  "error": {
+    "name": "ValidationError",
+    "errors": {
+      "copies": {
+        "message": "Copies must be a positive number",
+        "name": "ValidatorError",
+        "properties": {
+          "message": "Copies must be a positive number",
+          "type": "min",
+          "min": 0
+        },
+        "kind": "min",
+        "path": "copies",
+        "value": -5
+      }
+    }
+  }
+}
